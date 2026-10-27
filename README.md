@@ -83,7 +83,7 @@ npm run eval                # live: Nemotron on every scenario, answers cached i
 npm run eval -- --replay    # re-score cached answers offline
 ```
 
-Without a key the app still works with **Show the gate on an example**, which runs the gate on a hand-written proposal and says so on screen.
+Without a key the app still works with **Show the gate on an example**, which runs the gate on a hand-written proposal and says so on screen. Fields marked **Confirm** have Confirm / Not stated buttons: a person's confirmation is the only way such a field reaches the record.
 
 Deploy: import the repo in Vercel (Vite is detected, `api/` becomes serverless functions) and set the variables from `.env.example`.
 
@@ -98,6 +98,8 @@ Hand-written examples (`npm run eval -- --example`, 2 meeting notes and 4 field 
 - Wrong values reaching the record: 1 without the gate, 0 with it.
 - **Omissions were the larger risk:** in the two meetings Nemotron left out 3 of 6 commitments and decisions. A gate cannot judge what was never proposed, so the meeting pipeline also flags every line that reads like a commitment or decision and that no proposal quotes. It flagged all 3.
 - Cost: 3,785 tokens for the 6 calls (about 630 per note).
+
+The demo page shows these numbers at the top ("Measured on NVIDIA Nemotron"), replayed in the browser from `eval/out/` through the same gate; `tests/evidence.test.js` pins them so the page and this README cannot drift apart.
 
 So the case for FieldGuard is not that the model is bad. A good model still paraphrases its evidence and drops items; FieldGuard proves what enters the record and shows what may be missing.
 

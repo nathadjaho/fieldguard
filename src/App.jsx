@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { evidence } from './evidence.js';
 import { runGate } from './core/gate.js';
 import { PIPELINES as PROFILES, DEFAULT_PIPELINE as DEFAULT_PROFILE, SCENARIOS } from './pipelines/index.js';
 
@@ -19,12 +20,16 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  // Fields a person confirmed or marked "not stated", keyed by row index.
+  const [decided, setDecided] = useState({});
+  const [showRows, setShowRows] = useState(false);
+  const ev = useMemo(() => evidence(), []);
 
-  const pick = (s) => { setScenario(s); setNote(s.note); setResult(null); setError(''); };
+  const pick = (s) => { setScenario(s); setNote(s.note); setResult(null); setError(''); setDecided({}); };
   const switchProfile = (id) => { setProfileId(id); pick(firstOf(id)); };
 
   async function propose() {
-    setBusy(true); setError(''); setResult(null);
+    setBusy(true); setError(''); setResult(null); setDecided({});
     try {
       const res = await fetch('/api/propose', {
         method: 'POST',
@@ -43,9 +48,19 @@ export default function App() {
 
   function runExample() {
     setError('');
+    setDecided({});
     setNote(scenario.note);
     setResult({ ...runGate(scenario.note, scenario.example, profile), source: 'Hand-written example proposal (not model output), to show the gate offline' });
   }
+
+  // The gate's record plus what a person confirmed. Confirming is the only way a
+  // "Confirm" field reaches the record; the model still never writes it.
+  const resultProfile = result ? PROFILES[result.profile] || profile : profile;
+  const finalRecord = result
+    ? resultProfile.buildRecord(result.fields.filter((f, i) => f.status === 'accepted' || decided[i] === 'confirmed'))
+    : null;
+  const pending = result ? result.fields.filter((f, i) => f.status === 'needs_confirmation' && !decided[i]).length : 0;
+  const t = ev.totals;
 
   return (
     <div className="page">
@@ -53,6 +68,38 @@ export default function App() {
         <h1>FieldGuard</h1>
         <p className="tag">The model proposes. Code decides. Every field in the record quotes the note it comes from.</p>
       </header>
+
+      {t.notes > 0 && (
+        <section className="card evidence" aria-labelledby="ev-title">
+          <h2 id="ev-title">Measured on NVIDIA Nemotron</h2>
+          <p className="source">{t.notes} invented notes, {ev.model} on Nebius Token Factory, recorded {ev.date} and replayed here through the same gate (no model call).</p>
+          <div className="kpis">
+            <div className="kpi"><b>{t.wrongBefore} → {t.wrongAfter}</b><span>wrong values in the record, without → with the gate</span></div>
+            <div className="kpi"><b>{t.refused}</b><span>values refused: quote not in the note, or value not in its quote</span></div>
+            <div className="kpi"><b>{t.flagged} of {t.omitted}</b><span>meeting items the model left out, flagged for a person</span></div>
+            <div className="kpi"><b>~{Math.round(t.tokens / t.notes)}</b><span>tokens per note ({t.tokens} in total)</span></div>
+          </div>
+          <button className="link" onClick={() => setShowRows((v) => !v)} aria-expanded={showRows}>
+            {showRows ? 'Hide' : 'Show'} the {t.notes} notes
+          </button>
+          {showRows && (
+            <table className="small">
+              <thead><tr><th>Note</th><th>Wrong without → with</th><th>Refused</th><th>To confirm</th><th>Left out → flagged</th></tr></thead>
+              <tbody>
+                {ev.rows.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.pipeline} · {r.lang.toUpperCase()} · {r.title}</td>
+                    <td>{r.wrongBefore} → {r.wrongAfter}</td>
+                    <td>{r.refused}</td>
+                    <td>{r.toConfirm}</td>
+                    <td>{r.omitted == null ? '—' : `${r.omitted} → ${r.flagged}`}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+      )}
 
       <nav className="tabs" role="tablist" aria-label="What to turn into a record">
         {Object.values(PROFILES).map((p) => (
@@ -102,6 +149,15 @@ export default function App() {
                     <td>
                       <span className={`pill ${STATUS[f.status].cls}`}>{STATUS[f.status].label}</span>
                       {f.reasons.map((r) => <div key={r} className="reason">{r}</div>)}
+                      {f.status === 'needs_confirmation' && (
+                        decided[i]
+                          ? <div className="decided">{decided[i] === 'confirmed' ? '✓ Confirmed by a person' : 'Marked not stated'}
+                              <button className="link" onClick={() => setDecided((d) => { const n = { ...d }; delete n[i]; return n; })}>Undo</button></div>
+                          : <div className="decide">
+                              <button className="mini ok" onClick={() => setDecided((d) => ({ ...d, [i]: 'confirmed' }))}>Confirm</button>
+                              <button className="mini" onClick={() => setDecided((d) => ({ ...d, [i]: 'not_stated' }))}>Not stated</button>
+                            </div>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -121,8 +177,8 @@ export default function App() {
 
           <section className="card">
             <h2>Record written by the gate</h2>
-            <p className="source">Only accepted fields. Fields marked “Confirm” wait for a person to confirm them.</p>
-            <pre>{JSON.stringify(result.record, null, 2)}</pre>
+            <p className="source">Accepted fields, plus the ones a person confirmed.{pending > 0 && ` ${pending} field${pending > 1 ? 's' : ''} still waiting for confirmation.`}</p>
+            <pre>{JSON.stringify(finalRecord, null, 2)}</pre>
           </section>
         </>
       )}
