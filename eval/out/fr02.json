@@ -1,0 +1,26 @@
+{
+  "id": "fr02",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "text": "{\"fields\": [{\"name\": \"person_age\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"third_party\", \"certainty\": \"certain\"}, {\"name\": \"origin_town\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"third_party\", \"certainty\": \"certain\"}, {\"name\": \"current_location\", \"value\": \"N'Djamena\", \"quote\": \"où il travaille dans un garage.\", \"speaker\": \"third_party\", \"certainty\": \"certain\"}, {\"name\": \"exploitation_place\", \"value\": \"un garage\", \"quote\": \"il travaille dans un garage.\", \"speaker\": \"third_party\", \"certainty\": \"certain\"}, {\"name\": \"recruitment_place\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"third_party\", \"certainty\": \"certain\"}, {\"name\": \"injury\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"third_party\", \"certainty\": \"certain\"}, {\"name\": \"injury_cause\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"third_party\", \"certainty\": \"certain\"}, {\"name\": \"employer_name\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"third_party\", \"certainty\": \"certain\"}]}",
+  "finish_reason": "stop",
+  "usage": {
+    "completion_tokens": 277,
+    "prompt_tokens": 339,
+    "total_tokens": 616,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "created_cache_tokens": 0,
+      "multimodal_tokens": null
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 339
+  },
+  "at": "2026-10-27T20:51:35.348Z"
+}

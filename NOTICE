@@ -1,0 +1,7 @@
+FieldGuard
+Copyright 2026 Elke-Esmeralda Dikoume and Nathan Adjaho
+
+This product includes code from TRACE (github.com/ElkeDikoume/trace-humanitarian),
+Copyright (c) 2026 Elke-Esmeralda Dikoume, contributed under the Apache License 2.0
+with the author's permission: src/core/review/transcriptFacts.js,
+src/core/review/draftReview.js and tests/transcriptFacts.test.js.

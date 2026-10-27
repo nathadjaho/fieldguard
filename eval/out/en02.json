@@ -1,0 +1,26 @@
+{
+  "id": "en02",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "text": "{\"fields\": [{\"name\": \"person_age\", \"value\": \"17\", \"quote\": \"He is 17.\", \"speaker\": \"survivor\", \"certainty\": \"certain\"}, {\"name\": \"origin_town\", \"value\": \"Ngaoundal\", \"quote\": \"He says he comes from Ngaoundal.\", \"speaker\": \"survivor\", \"certainty\": \"uncertain\"}, {\"name\": \"current_location\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"\", \"certainty\": \"certain\"}, {\"name\": \"exploitation_place\", \"value\": \"cattle farm near Tibati\", \"quote\": \"He was kept at a cattle farm near Tibati\", \"speaker\": \"survivor\", \"certainty\": \"certain\"}, {\"name\": \"recruitment_place\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"\", \"certainty\": \"certain\"}, {\"name\": \"injury\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"\", \"certainty\": \"certain\"}, {\"name\": \"injury_cause\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"\", \"certainty\": \"certain\"}, {\"name\": \"employer_name\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"\", \"certainty\": \"certain\"}]}",
+  "finish_reason": "stop",
+  "usage": {
+    "completion_tokens": 278,
+    "prompt_tokens": 335,
+    "total_tokens": 613,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "created_cache_tokens": 0,
+      "multimodal_tokens": null
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 335
+  },
+  "at": "2026-10-27T20:51:33.700Z"
+}

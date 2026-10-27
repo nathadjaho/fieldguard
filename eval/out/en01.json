@@ -1,0 +1,26 @@
+{
+  "id": "en01",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "text": "{\"fields\": [{\"name\": \"person_age\", \"value\": \"about 16\", \"quote\": \"She thinks she is about 16.\", \"speaker\": \"survivor\", \"certainty\": \"uncertain\", \"group\": 1}, {\"name\": \"origin_town\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"current_location\", \"value\": \"shelter in Garoua\", \"quote\": \"She now stays at the shelter in Garoua.\", \"speaker\": \"survivor\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"exploitation_place\", \"value\": \"restaurant in Mokolo\", \"quote\": \"she worked in a restaurant in Mokolo for two years\", \"speaker\": \"survivor\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"recruitment_place\", \"value\": \"market in Maroua\", \"quote\": \"Mrs Johnson recruited her at the market in Maroua\", \"speaker\": \"survivor\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"injury\", \"value\": \"burn on her left hand\", \"quote\": \"there is a burn on her left hand\", \"speaker\": \"survivor\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"injury_cause\", \"value\": \"accident\", \"quote\": \"She says she hurt herself while cooking last week\", \"speaker\": \"survivor\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"employer_name\", \"value\": \"Mrs Johnson\", \"quote\": \"A woman called Mrs Johnson recruited her at the market in Maroua\", \"speaker\": \"survivor\", \"certainty\": \"certain\", \"group\": 1}]}",
+  "finish_reason": "stop",
+  "usage": {
+    "completion_tokens": 416,
+    "prompt_tokens": 372,
+    "total_tokens": 788,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "created_cache_tokens": 0,
+      "multimodal_tokens": null
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 372
+  },
+  "at": "2026-10-27T20:51:29.832Z"
+}
