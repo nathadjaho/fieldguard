@@ -12,6 +12,29 @@ const STATUS = {
 
 const firstOf = (id) => SCENARIOS.find((s) => s.profile === id);
 
+// The record as a caseworker or team lead would read it; the JSON stays one click away.
+function RecordView({ record, profile }) {
+  if (profile.id === 'meeting') {
+    const { commitments = [], decisions = [] } = record;
+    if (!commitments.length && !decisions.length) return <p className="empty">Nothing in the record yet: every proposal was refused or is waiting for a person.</p>;
+    return (
+      <dl className="record">
+        {commitments.map((c, i) => (
+          <div key={`c${i}`}><dt>Commitment</dt><dd><b>{c.owner}</b>: {c.action}{c.due && <span className="due"> · by {c.due}</span>}</dd></div>
+        ))}
+        {decisions.map((d, i) => <div key={`d${i}`}><dt>Decision</dt><dd>{d}</dd></div>)}
+      </dl>
+    );
+  }
+  const rows = Object.entries(record).filter(([, v]) => v);
+  if (!rows.length) return <p className="empty">Nothing in the record yet: every proposal was refused or is waiting for a person.</p>;
+  return (
+    <dl className="record">
+      {rows.map(([k, v]) => <div key={k}><dt>{profile.fields[k]?.label || k}</dt><dd>{v}</dd></div>)}
+    </dl>
+  );
+}
+
 export default function App() {
   const [profileId, setProfileId] = useState(DEFAULT_PROFILE);
   const profile = PROFILES[profileId];
@@ -181,7 +204,8 @@ export default function App() {
           <section className="card">
             <h2>Record written by the gate</h2>
             <p className="source">Accepted fields, plus the ones a person confirmed.{pending > 0 && ` ${pending} field${pending > 1 ? 's' : ''} still waiting for confirmation.`}</p>
-            <pre>{JSON.stringify(finalRecord, null, 2)}</pre>
+            <RecordView record={finalRecord} profile={resultProfile} />
+            <details className="json"><summary>Show as JSON</summary><pre>{JSON.stringify(finalRecord, null, 2)}</pre></details>
           </section>
         </>
       )}
