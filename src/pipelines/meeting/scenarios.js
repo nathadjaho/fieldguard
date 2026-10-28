@@ -43,7 +43,7 @@ export const SCENARIOS = [
     profile: 'meeting',
     lang: 'fr',
     title: 'Rapport et fournisseur',
-    traps: ['la personne qui propose notée comme responsable', '« peut-être » noté comme certain'],
+    traps: ['the person who proposed recorded as the owner', '"peut-être" (maybe) recorded as firm'],
     note: [
       'Sophie : Je propose que Pierre prépare le rapport pour lundi.',
       "Pierre : D'accord, je m'en occupe, lundi c'est bon.",

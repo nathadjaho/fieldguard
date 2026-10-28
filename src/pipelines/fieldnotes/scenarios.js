@@ -12,7 +12,7 @@ export const SCENARIOS = [
     profile: 'fieldnotes',
     lang: 'en',
     title: 'Restaurant work, kitchen burn',
-    traps: ['A: workplace town as origin', 'C: reflexive accident', 'B: hedged age'],
+    traps: ['the town where she worked recorded as her origin', 'an accident recorded as self-harm', 'a hedged age recorded as certain'],
     note: 'Fatima says she worked in a restaurant in Mokolo for two years. A woman called Mrs Johnson recruited her at the market in Maroua. She thinks she is about 16. She now stays at the shelter in Garoua. She says she hurt herself while cooking last week; there is a burn on her left hand.',
     truth: {
       person_age: '16', origin_town: '', current_location: 'Garoua', exploitation_place: 'Mokolo',
@@ -34,7 +34,7 @@ export const SCENARIOS = [
     profile: 'fieldnotes',
     lang: 'fr',
     title: 'Travail domestique, chute',
-    traps: ['C: verbe pronominal', 'B: âge incertain', 'attribution à un tiers'],
+    traps: ['a fall recorded as self-harm', 'a hedged age recorded as certain', 'what her aunt said recorded as her own words'],
     note: "Selon sa tante, Marie vient de Batouri. Elle a travaillé comme domestique chez M. Dupont à Bonabéri. Elle s'est blessée en tombant dans l'escalier. Elle pense avoir 14 ans.",
     truth: {
       person_age: '14', origin_town: 'Batouri', current_location: '', exploitation_place: 'Bonabéri',
@@ -56,7 +56,7 @@ export const SCENARIOS = [
     profile: 'fieldnotes',
     lang: 'en',
     title: 'Unfamiliar town name',
-    traps: ['F: place outside the list', 'invented quote'],
+    traps: ['a town name the place list does not know', 'a quote the note does not contain'],
     note: 'Mohamed is 17. He says he comes from Ngaoundal. He was kept at a cattle farm near Tibati and left two weeks ago.',
     truth: {
       person_age: '17', origin_town: 'Ngaoundal', current_location: '', exploitation_place: 'Tibati',
@@ -78,7 +78,7 @@ export const SCENARIOS = [
     profile: 'fieldnotes',
     lang: 'fr',
     title: 'Transit, pas d’origine',
-    traps: ['A: ville de transit comme origine'],
+    traps: ['a transit town recorded as his origin'],
     note: "Il est passé par Kousseri avant d'arriver à N'Djamena, où il travaille dans un garage. Il n'a pas dit d'où il vient.",
     truth: {
       person_age: '', origin_town: '', current_location: "N'Djamena", exploitation_place: "N'Djamena",
