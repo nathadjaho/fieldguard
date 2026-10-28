@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { evidence } from './evidence.js';
 import { runGate } from './core/gate.js';
 import { PIPELINES as PROFILES, DEFAULT_PIPELINE as DEFAULT_PROFILE, SCENARIOS } from './pipelines/index.js';
@@ -24,6 +24,9 @@ export default function App() {
   const [decided, setDecided] = useState({});
   const [showRows, setShowRows] = useState(false);
   const ev = useMemo(() => evidence(), []);
+  // Results draw below the note; bring them into view so a click visibly does something.
+  const resultRef = useRef(null);
+  useEffect(() => { if (result) resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [result]);
 
   const pick = (s) => { setScenario(s); setNote(s.note); setResult(null); setError(''); setDecided({}); };
   const switchProfile = (id) => { setProfileId(id); pick(firstOf(id)); };
@@ -131,7 +134,7 @@ export default function App() {
 
       {result && (
         <>
-          <section className="card">
+          <section className="card" ref={resultRef}>
             <div className="summary">
               {Object.entries(result.summary).map(([k, n]) => (
                 <span key={k} className={`pill ${STATUS[k].cls}`}>{n} {STATUS[k].label.toLowerCase()}</span>
