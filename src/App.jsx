@@ -11,6 +11,8 @@ const STATUS = {
 };
 
 const firstOf = (id) => SCENARIOS.find((s) => s.profile === id);
+// "nvidia/Nemotron-3-Ultra-550b-a55b" reads as "Nemotron 3 Ultra" on the page.
+const shortModel = (id) => { const m = String(id).split('/').pop().match(/nemotron-\d+-[a-z]+/i); return m ? m[0].replace(/-/g, ' ').replace(/^n/, 'N') : id; };
 
 // The record as a caseworker or team lead would read it; the JSON stays one click away.
 function RecordView({ record, profile }) {
@@ -20,7 +22,7 @@ function RecordView({ record, profile }) {
     return (
       <dl className="record">
         {commitments.map((c, i) => (
-          <div key={`c${i}`}><dt>Commitment</dt><dd><b>{c.owner}</b>: {c.action}{c.due && <span className="due"> · by {c.due}</span>}</dd></div>
+          <div key={`c${i}`}><dt>Commitment</dt><dd><b>{c.owner}</b>: {c.action}{c.due && <span className="due"> · due {c.due}</span>}</dd></div>
         ))}
         {decisions.map((d, i) => <div key={`d${i}`}><dt>Decision</dt><dd>{d}</dd></div>)}
       </dl>
@@ -64,7 +66,11 @@ export default function App() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-      setResult({ ...data.gate, source: `Live: ${data.model} on Nebius Token Factory, ${data.ms} ms` });
+      const r = data.retry;
+      const second = !r ? '' : r.error
+        ? ` · second pass by ${r.model} skipped: ${r.error}`
+        : ` · ${r.model} re-read ${r.fields} refused field${r.fields > 1 ? 's' : ''}, ${r.ms} ms`;
+      setResult({ ...data.gate, source: `Live on Nebius Token Factory: ${data.model} proposed, ${data.ms} ms${second}` });
     } catch (e) {
       setError(e.message);
     } finally {
@@ -101,7 +107,7 @@ export default function App() {
           <p className="source">{t.notes} invented notes, {ev.model} on Nebius Token Factory, recorded {ev.date} and replayed here through the same gate (no model call).</p>
           <div className="kpis">
             <div className="kpi"><b>{t.wrongBefore} → {t.wrongAfter}</b><span>wrong values in the record, without → with the gate</span></div>
-            <div className="kpi"><b>{t.refused}</b><span>values refused: quote not in the note, or value not in its quote</span></div>
+            <div className="kpi"><b>{t.firstRefused} → {t.refused}</b><span>values refused for lack of evidence, before → after Nemotron 3 Ultra re-read them ({t.fixed} fixed)</span></div>
             <div className="kpi"><b>{t.flagged} of {t.omitted}</b><span>meeting items the model left out, flagged for a person</span></div>
             <div className="kpi"><b>~{Math.round(t.tokens / t.notes)}</b><span>tokens per note ({t.tokens} in total)</span></div>
           </div>
@@ -175,6 +181,9 @@ export default function App() {
                     <td>
                       <span className={`pill ${STATUS[f.status].cls}`}>{STATUS[f.status].label}</span>
                       {f.reasons.map((r) => <div key={r} className="reason">{r}</div>)}
+                      {f.retry && (
+                        <div className="retry">Second pass by {shortModel(f.retry.model)}. First answer “{f.retry.first.value}” was refused: {f.retry.first.reasons.join('; ')}</div>
+                      )}
                       {f.status === 'needs_confirmation' && (
                         decided[i]
                           ? <div className="decided">{decided[i] === 'confirmed' ? '✓ Confirmed by a person' : 'Marked not stated'}

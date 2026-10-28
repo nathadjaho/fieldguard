@@ -7,6 +7,6 @@ describe('evidence shown on the page', () => {
   it('replays the six recorded Nemotron answers', () => {
     const { rows, totals } = evidence();
     expect(rows).toHaveLength(6);
-    expect(totals).toMatchObject({ wrongBefore: 1, wrongAfter: 0, refused: 2, omitted: 3, flagged: 3, tokens: 3785 });
+    expect(totals).toMatchObject({ wrongBefore: 1, wrongAfter: 0, firstRefused: 3, refused: 1, fixed: 2, omitted: 3, flagged: 3, tokens: 4948 });
   });
 });

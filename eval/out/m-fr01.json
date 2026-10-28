@@ -1,12 +1,12 @@
 {
   "id": "m-fr01",
   "model": "nvidia/nemotron-3-super-120b-a12b",
-  "text": "{\"fields\": [{\"name\": \"commitment_owner\", \"value\": \"Pierre\", \"quote\": \"je m'en occupe\", \"speaker\": \"Pierre\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"commitment_action\", \"value\": \"prépare le rapport\", \"quote\": \"Je propose que Pierre prépare le rapport pour lundi.\", \"speaker\": \"Sophie\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"commitment_due\", \"value\": \"lundi\", \"quote\": \"lundi c'est bon\", \"speaker\": \"Pierre\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"decision\", \"value\": \"garder le budget actuel\", \"quote\": \"On a décidé de garder le budget actuel.\", \"speaker\": \"Sophie\", \"certainty\": \"certain\", \"group\": 2}]}",
+  "text": "{\"fields\": [{\"name\": \"commitment_owner\", \"value\": \"Pierre\", \"quote\": \"D'accord, je m'en occupe, lundi c'est bon.\", \"speaker\": \"Pierre\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"commitment_action\", \"value\": \"prépare le rapport\", \"quote\": \"Je propose que Pierre prépare le rapport pour lundi.\", \"speaker\": \"Sophie\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"commitment_due\", \"value\": \"lundi\", \"quote\": \"Je propose que Pierre prépare le rapport pour lundi.\", \"speaker\": \"Sophie\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"decision\", \"value\": \"garder le budget actuel\", \"quote\": \"On a décidé de garder le budget actuel.\", \"speaker\": \"Sophie\", \"certainty\": \"certain\", \"group\": 2}]}",
   "finish_reason": "stop",
   "usage": {
-    "completion_tokens": 195,
+    "completion_tokens": 208,
     "prompt_tokens": 322,
-    "total_tokens": 517,
+    "total_tokens": 530,
     "completion_tokens_details": {
       "accepted_prediction_tokens": null,
       "audio_tokens": null,
@@ -22,5 +22,5 @@
     "prompt_cache_hit_tokens": 0,
     "prompt_cache_miss_tokens": 322
   },
-  "at": "2026-10-27T20:51:27.563Z"
+  "at": "2026-10-28T22:50:16.501Z"
 }

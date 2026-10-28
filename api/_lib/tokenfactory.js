@@ -26,6 +26,10 @@ export function config(env = process.env) {
     // Nemotron 3 models think before answering. For field extraction we turn it
     // off by default; set NEMOTRON_THINKING=on to keep it.
     thinking: (env.NEMOTRON_THINKING || 'off').toLowerCase() === 'on',
+    // Second pass on rejected fields with the reasoning model (src/core/retry.js).
+    // NEMOTRON_RETRY=off turns it off; past RETRY_TIMEOUT_MS the first pass stands.
+    retry: (env.NEMOTRON_RETRY || 'on').toLowerCase() !== 'off',
+    retryTimeoutMs: Number(env.RETRY_TIMEOUT_MS) || 20000,
     maxTokens: Number(env.NEMOTRON_MAX_TOKENS) || 4096
   };
 }
