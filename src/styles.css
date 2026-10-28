@@ -66,3 +66,13 @@ footer { color: var(--muted); font-size: 13px; text-align: center; margin-top: 2
   td { border: 0; padding: 4px 0; }
   td:first-child { font-weight: 700; }
 }
+
+.record { margin: 12px 0 0; display: grid; gap: 0; }
+.record > div { display: grid; grid-template-columns: 220px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.record dt { color: var(--muted); }
+.record dd { margin: 0; color: var(--navy); font-weight: 500; }
+.record .due { color: var(--muted); font-weight: 400; }
+.empty { color: var(--muted); margin: 12px 0 0; }
+details.json { margin-top: 12px; }
+details.json summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+@media (max-width: 560px) { .record > div { grid-template-columns: 1fr; gap: 2px; } }

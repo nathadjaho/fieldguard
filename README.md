@@ -24,8 +24,8 @@ field note ──► Nemotron (Token Factory) ──► proposed fields, each wi
                                      the gate (plain code, src/core/gate.js)
                      ┌──────────────┬──────────────┼───────────────┬────────────────┐
                      ▼              ▼              ▼               ▼                ▼
-              quote is in the   origin cue?   self-harm only   hedge kept as   known place?
-              note, value is    (not a work,  if the note      "uncertain"     else ask to
+              quote is in the   origin cue?   self-harm only   hedged or       known place?
+              note, value is    (not a work,  if the note      uncertain?      else ask to
               in the quote      transit or    states intent                    confirm spelling
                                 current town)
                                                    │
@@ -38,7 +38,7 @@ field note ──► Nemotron (Token Factory) ──► proposed fields, each wi
 | Origin | a workplace, recruitment, transit or current town recorded as origin | finding A |
 | Current location | a past place recorded as where someone is now | found while testing FieldGuard |
 | Self-harm | an accident recorded as self-inflicted without stated intent | finding C |
-| Hedge | "she thinks she is about 16" recorded as certain | hedge observation (B) |
+| Hedge | "she thinks she is about 16" recorded as certain; any value the model marks uncertain waits for a person | hedge observation (B) |
 | Place list | an unfamiliar town name, sent back for confirmation | finding F |
 | Name leak | names left in an anonymised text (`leakedNames`) | finding D |
 | Owner (meetings) | the person who spoke or asked recorded as the person who committed | finding A, meeting form |
@@ -94,7 +94,7 @@ Hand-written examples (`npm run eval -- --example`, 2 meeting notes and 4 field 
 **Live, `nvidia/nemotron-3-super-120b-a12b` on Token Factory** (27 Oct 2026, 6 invented scenarios, temperature 0, thinking off; answers in `eval/out/`, re-score with `npm run eval -- --replay`):
 
 - Nemotron Super avoided every trap our Apertus findings were built on: no workplace or transit town as origin, no accident turned into self-harm, no proposer recorded as owner, and it marked hedged ages as uncertain itself.
-- The gate still refused 2 ungrounded values: a quote the model paraphrased ("He is 17." where the note says "Mohamed is 17.") and a current location whose quote did not contain it. It sent 2 values for confirmation ("un garage" as a place, and Ngaoundal, a real town outside the place list).
+- The gate still refused 2 ungrounded values: a quote the model paraphrased ("He is 17." where the note says "Mohamed is 17.") and a current location whose quote did not contain it. It sent 5 values for confirmation: "un garage" as a place, Ngaoundal (a real town outside the place list), and the three values Nemotron itself marked uncertain (two hedged ages and Mary as owner after "I'll try"). A value the model doubts never enters the record without a person.
 - Wrong values reaching the record: 1 without the gate, 0 with it.
 - **Omissions were the larger risk:** in the two meetings Nemotron left out 3 of 6 commitments and decisions. A gate cannot judge what was never proposed, so the meeting pipeline also flags every line that reads like a commitment or decision and that no proposal quotes. It flagged all 3.
 - Cost: 3,785 tokens for the 6 calls (about 630 per note).
