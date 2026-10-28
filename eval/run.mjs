@@ -8,6 +8,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { SCENARIOS, getPipeline } from '../src/pipelines/index.js';
 import { runGate, recordWithoutGate } from '../src/core/gate.js';
+import { retryTargets, buildRetryMessages, mergeRetry } from '../src/core/retry.js';
 import { buildMessages, parseProposal } from '../src/core/prompt.js';
 import { chat, config } from '../api/_lib/tokenfactory.js';
 
@@ -29,11 +30,20 @@ async function proposalFor(s, profile) {
   if (mode === 'replay') {
     if (!existsSync(file)) throw new Error(`no cached answer for ${s.id}; run without --replay first`);
     const c = JSON.parse(readFileSync(file, 'utf8'));
-    return { proposal: parseProposal(c.text, profile), model: c.model };
+    return { proposal: parseProposal(c.text, profile), model: c.model, retry: c.retry };
   }
   const answer = await chat({ ...cfg, model: cfg.fastModel, messages: buildMessages(s.note, s.lang, profile) });
-  writeFileSync(file, JSON.stringify({ id: s.id, model: answer.model, text: answer.text, finish_reason: answer.finishReason, usage: answer.usage, at: new Date().toISOString() }, null, 2));
-  return { proposal: parseProposal(answer.text, profile), model: answer.model };
+  const proposal = parseProposal(answer.text, profile);
+  // Second pass on what the gate refused, cached next to the first answer.
+  let retry;
+  const targets = retryTargets(runGate(s.note, proposal, profile));
+  if (cfg.retry && targets.length) {
+    const t0 = Date.now();
+    const again = await chat({ ...cfg, model: cfg.reasoningModel, messages: buildRetryMessages(s.note, s.lang, profile, targets) });
+    retry = { model: again.model, text: again.text, usage: again.usage, ms: Date.now() - t0 };
+  }
+  writeFileSync(file, JSON.stringify({ id: s.id, model: answer.model, text: answer.text, finish_reason: answer.finishReason, usage: answer.usage, at: new Date().toISOString(), ...(retry ? { retry } : {}) }, null, 2));
+  return { proposal, model: answer.model, retry };
 }
 
 const totals = { without: 0, with: 0, keptRight: 0, proposedRight: 0, omitted: 0, flagged: 0 };
@@ -46,14 +56,15 @@ for (const s of SCENARIOS) {
     totals.errors = (totals.errors || 0) + 1;
     continue;
   }
-  const { proposal, model } = got;
+  const { proposal, model, retry } = got;
   if (!proposal.length) { console.log(`${s.id} [${profile.id}] (${model}) no fields parsed from the answer`); totals.errors = (totals.errors || 0) + 1; continue; }
-  const gate = runGate(s.note, proposal, profile);
+  const first = runGate(s.note, proposal, profile);
+  const gate = retry ? mergeRetry(s.note, profile, first, retry.text, retry.model) : first;
   const a = profile.score(recordWithoutGate(proposal, profile), s.truth);
   const b = profile.score(gate.record, s.truth);
   totals.without += a.wrong; totals.with += b.wrong; totals.proposedRight += a.right; totals.keptRight += b.right;
   totals.omitted += a.missed; totals.flagged += gate.uncovered.length;
-  console.log(`${s.id} [${profile.id}] (${model})`);
+  console.log(`${s.id} [${profile.id}] (${model}${retry ? `, then ${retry.model} on ${retryTargets(first).length} refused field(s)` : ''})`);
   console.log(`  without gate: ${a.wrong} wrong  ${a.wrongList.join(', ')}`);
   console.log(`  with gate:    ${b.wrong} wrong  ${b.wrongList.join(', ')}  · ${gate.summary.needs_confirmation} to confirm, ${gate.summary.rejected} rejected`);
   if (a.missed) console.log(`  missing or wrong in the proposal: ${a.missedList.join(', ')}`);

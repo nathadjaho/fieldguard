@@ -65,7 +65,8 @@ The first rows apply to field notes, the last three to meeting notes; grounding 
 ## NVIDIA Nemotron and Nebius Token Factory
 
 - Every model call goes through `api/_lib/tokenfactory.js` to the Token Factory OpenAI-compatible endpoint (`https://api.tokenfactory.nebius.com/v1`).
-- `NEMOTRON_FAST_MODEL` proposes the fields on every request (fast and cheap, so the demo stays responsive). `NEMOTRON_REASONING_MODEL` is reserved for the referral draft.
+- `NEMOTRON_FAST_MODEL` (Nemotron 3 Super) proposes the fields on every request, fast and cheap so the demo stays responsive.
+- `NEMOTRON_REASONING_MODEL` (Nemotron 3 Ultra) runs a second pass only when the gate refuses a field: it re-reads the note with the gate's reason, and its answer goes through the same gate (`src/core/retry.js`). If it fails or runs past `RETRY_TIMEOUT_MS`, the first pass stands; `NEMOTRON_RETRY=off` turns it off.
 - Each answer's `model` field is checked against the model requested; a substituted model is refused (`ModelMismatch`). We learned this the hard way: during our Apertus red-teaming a gateway answered about half our requests to one model with another.
 - The demo is rate-limited per IP (`RATE_LIMIT_PER_HOUR`) and should also have a spending cap set in the Token Factory console.
 
@@ -91,13 +92,15 @@ Deploy: import the repo in Vercel (Vite is detected, `api/` becomes serverless f
 
 Hand-written examples (`npm run eval -- --example`, 2 meeting notes and 4 field notes): 9 wrong values would reach the record without the gate, 0 with it; 13 of 18 correct values are accepted directly, the other 5 wait for a person to confirm. These examples are written by us to exercise the gate; they are not model output.
 
-**Live, `nvidia/nemotron-3-super-120b-a12b` on Token Factory** (27 Oct 2026, 6 invented scenarios, temperature 0, thinking off; answers in `eval/out/`, re-score with `npm run eval -- --replay`):
+**Live, Nemotron 3 Super then Nemotron 3 Ultra on Token Factory** (28 Oct 2026, 6 invented scenarios, temperature 0, thinking off; both answers in `eval/out/`, re-score with `npm run eval -- --replay`):
 
-- Nemotron Super avoided every trap our Apertus findings were built on: no workplace or transit town as origin, no accident turned into self-harm, no proposer recorded as owner, and it marked hedged ages as uncertain itself.
-- The gate still refused 2 ungrounded values: a quote the model paraphrased ("He is 17." where the note says "Mohamed is 17.") and a current location whose quote did not contain it. It sent 5 values for confirmation: "un garage" as a place, Ngaoundal (a real town outside the place list), and the three values Nemotron itself marked uncertain (two hedged ages and Mary as owner after "I'll try"). A value the model doubts never enters the record without a person.
+- Nemotron 3 Super (`nvidia/nemotron-3-super-120b-a12b`) proposed every field. It avoided every trap our Apertus findings were built on: no workplace or transit town as origin, no accident turned into self-harm, no proposer recorded as owner, and it marked hedged ages as uncertain itself.
+- The gate still refused 3 values for lack of evidence: an action quoted from the wrong line ("send the budget to the donor" cited from Mary's "I'll try" reply), a paraphrased quote ("He is 17." where the note says "Mohamed is 17."), and a current location whose quote did not contain it.
+- **Second pass:** Nemotron 3 Ultra (`nvidia/Nemotron-3-Ultra-550b-a55b`) re-read each refused field with the gate's reason, in about half a second per note. It fixed 2 of the 3 (it quoted John's line for the budget, and "Mohamed is 17."); its answer for the third repeated the unsupported value and was refused again. The gate judged every second answer; Ultra never writes the record either.
 - Wrong values reaching the record: 1 without the gate, 0 with it.
+- 5 values waited for a person: the three Nemotron marked uncertain (two hedged ages and Mary's "I'll try" commitment), "un garage" as a place, and Ngaoundal, a real town outside the place list.
 - **Omissions were the larger risk:** in the two meetings Nemotron left out 3 of 6 commitments and decisions. A gate cannot judge what was never proposed, so the meeting pipeline also flags every line that reads like a commitment or decision and that no proposal quotes. It flagged all 3.
-- Cost: 3,785 tokens for the 6 calls (about 630 per note).
+- Cost: 4,948 tokens for the 6 notes including the second passes (about 825 per note). Measured latency on the live site: 1.7 to 2.1 s for Super, 0.7 to 0.8 s for the Ultra second pass.
 
 The demo page shows these numbers at the top ("Measured on NVIDIA Nemotron"), replayed in the browser from `eval/out/` through the same gate; `tests/evidence.test.js` pins them so the page and this README cannot drift apart.
 

@@ -1,0 +1,5 @@
+{
+  "functions": {
+    "api/propose.js": { "maxDuration": 60 }
+  }
+}

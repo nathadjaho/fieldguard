@@ -85,6 +85,12 @@ export function runGate(note, proposal, profile) {
     }
     fields.push(judgeField(note, f, profile));
   }
+  return finishGate(note, fields, proposal, profile);
+}
+
+/** Record, omission check and counts from judged fields. Shared by the first
+ *  pass and the retry pass (src/core/retry.js). */
+export function finishGate(note, fields, proposal, profile) {
   const record = profile.buildRecord(fields.filter((f) => f.status === 'accepted'));
   const count = (s) => fields.filter((f) => f.status === s).length;
   // Optional: what the notes say that nobody proposed (omissions).

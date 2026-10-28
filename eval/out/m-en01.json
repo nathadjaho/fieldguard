@@ -1,12 +1,12 @@
 {
   "id": "m-en01",
   "model": "nvidia/nemotron-3-super-120b-a12b",
-  "text": "{\"fields\": [{\"name\": \"commitment_owner\", \"value\": \"Mary\", \"quote\": \"I'll try, but I need the figures from David first.\", \"speaker\": \"Mary\", \"certainty\": \"uncertain\", \"group\": 1}, {\"name\": \"commitment_action\", \"value\": \"send the budget to the donor\", \"quote\": \"Mary will send the budget to the donor by Friday.\", \"speaker\": \"John\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"commitment_due\", \"value\": \"by Friday\", \"quote\": \"Mary will send the budget to the donor by Friday.\", \"speaker\": \"John\", \"certainty\": \"certain\", \"group\": 1}]}",
+  "text": "{\"fields\": [{\"name\": \"commitment_owner\", \"value\": \"Mary\", \"quote\": \"I'll try, but I need the figures from David first.\", \"speaker\": \"Mary\", \"certainty\": \"uncertain\", \"group\": 1}, {\"name\": \"commitment_action\", \"value\": \"send the budget to the donor\", \"quote\": \"I'll try, but I need the figures from David first.\", \"speaker\": \"Mary\", \"certainty\": \"uncertain\", \"group\": 1}, {\"name\": \"commitment_due\", \"value\": \"by Friday\", \"quote\": \"Mary will send the budget to the donor by Friday.\", \"speaker\": \"John\", \"certainty\": \"certain\", \"group\": 1}, {\"name\": \"decision\", \"value\": \"\", \"quote\": \"\", \"speaker\": \"\", \"certainty\": \"certain\", \"group\": 2}]}",
   "finish_reason": "stop",
   "usage": {
-    "completion_tokens": 161,
+    "completion_tokens": 197,
     "prompt_tokens": 340,
-    "total_tokens": 501,
+    "total_tokens": 537,
     "completion_tokens_details": {
       "accepted_prediction_tokens": null,
       "audio_tokens": null,
@@ -15,12 +15,35 @@
     },
     "prompt_tokens_details": {
       "audio_tokens": null,
-      "cached_tokens": 0,
+      "cached_tokens": 320,
       "created_cache_tokens": 0,
       "multimodal_tokens": null
     },
-    "prompt_cache_hit_tokens": 0,
-    "prompt_cache_miss_tokens": 340
+    "prompt_cache_hit_tokens": 320,
+    "prompt_cache_miss_tokens": 20
   },
-  "at": "2026-10-27T20:51:25.529Z"
+  "at": "2026-10-28T22:50:15.070Z",
+  "retry": {
+    "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+    "text": "{\"fields\":[{\"name\":\"commitment_action\",\"value\":\"send the budget to the donor by Friday\",\"quote\":\"Mary will send the budget to the donor by Friday.\",\"speaker\":\"John\",\"certainty\":\"certain\",\"group\":1}]}",
+    "usage": {
+      "completion_tokens": 50,
+      "prompt_tokens": 367,
+      "total_tokens": 417,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 0,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0,
+        "multimodal_tokens": null
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 367
+    },
+    "ms": 713
+  }
 }
