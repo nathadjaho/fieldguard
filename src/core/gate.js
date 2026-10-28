@@ -15,6 +15,22 @@ import { detectFacts } from './review/transcriptFacts.js';
 
 const EMPTY = new Set(['', 'unknown', 'inconnu', 'inconnue', 'n/a', 'na', 'none', 'null', 'not stated', 'non precise', 'not specified']);
 
+// Little words that carry no content, so free text is judged on the words that do.
+const STOP = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this', 'their', 'her', 'his', 'its', 'our', 'your',
+  'les', 'des', 'une', 'pour', 'avec', 'dans', 'sur', 'par', 'que', 'qui', 'son', 'ses', 'leur', 'aux', 'est']);
+
+// "budget" matches "budgets", "prepare" matches "prepares": same first five letters.
+const sameWord = (a, b) => a === b || (a.length >= 5 && b.length >= 5 && a.slice(0, 5) === b.slice(0, 5));
+
+/** Free text is grounded when most of its content words are in its own quote. */
+function textSupported(quote, value) {
+  const content = words(value).filter((w) => w.length >= 3 && !STOP.has(w));
+  if (!content.length) return containsPhrase(quote, value);
+  const inQuote = words(quote);
+  const found = content.filter((w) => inQuote.some((q) => sameWord(w, q))).length;
+  return found * 3 >= content.length * 2;
+}
+
 function valueSupported(note, field, spec) {
   if (spec.kind === 'enum') return spec.values.includes(field.value);
   if (spec.kind === 'age') {
@@ -22,7 +38,7 @@ function valueSupported(note, field, spec) {
     if (digits && field.quote.includes(digits)) return true;
     return detectFacts(field.quote).some((f) => f.kind === 'number' || f.kind === 'age');
   }
-  if (spec.kind === 'text') return true; // free text is checked by the quote and the domain checks
+  if (spec.kind === 'text') return textSupported(field.quote, field.value);
   if (spec.kind === 'person') {
     // "David: I can share the figures" names David through the line's speaker.
     const speaker = speakerOf(note, field.quote);
@@ -48,6 +64,11 @@ export function judgeField(note, field, profile) {
   const hardReasons = hard.filter(Boolean);
   if (hardReasons.length) return { ...out, status: 'rejected', reasons: hardReasons };
   const softReasons = soft.filter(Boolean);
+  // Unsure stays unsure: when the model itself marks a value uncertain, the
+  // record does not carry that doubt, so a person confirms it before it goes in.
+  if (field.certainty === 'uncertain' && !softReasons.length) {
+    softReasons.push('marked uncertain: a person confirms it before it enters the record');
+  }
   if (softReasons.length) return { ...out, status: 'needs_confirmation', reasons: softReasons };
   return out;
 }

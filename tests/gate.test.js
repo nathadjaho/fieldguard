@@ -146,6 +146,25 @@ describe('meeting profile', () => {
     expect(g.uncovered.some((u) => /could/.test(u.line))).toBe(false);
   });
 
+  // Live Nemotron answer, 28 Oct 2026: every field cited Mary's reply.
+  it('rejects a task its quote does not contain, and asks a person about an uncertain owner', () => {
+    const reply = "I'll try, but I need the figures from David first.";
+    const live = [
+      { name: 'commitment_owner', value: 'Mary', quote: reply, certainty: 'uncertain', group: '1' },
+      { name: 'commitment_action', value: 'send the budget to the donor', quote: reply, certainty: 'uncertain', group: '1' },
+      { name: 'commitment_due', value: 'by Friday', quote: reply, certainty: 'uncertain', group: '1' }
+    ];
+    const g = runGate(s.note, live, M);
+    expect(g.fields.map((f) => f.status)).toEqual(['needs_confirmation', 'rejected', 'rejected']);
+    expect(g.record.commitments).toEqual([]);
+    expect(g.uncovered[0].line).toMatch(/^John: Mary will send/);
+  });
+
+  it('accepts free text whose words are in its quote, even lightly reworded', () => {
+    expect(judge({ name: 'commitment_action', value: 'Send the budgets to the donor', quote: 'Mary will send the budget to the donor by Friday' }).status).toBe('accepted');
+    expect(judge({ name: 'decision', value: 'Keep the training on 12 November', quote: 'Agreed, we keep the training on 12 November' }).status).toBe('accepted');
+  });
+
   it('scores omissions against the truth sheet', () => {
     const sc = M.score({ commitments: [{ owner: 'Mary', action: 'send the budget' }], decisions: [] }, s.truth);
     expect(sc.missedList).toEqual(['David: figures', 'decision: training on 12 November']);
