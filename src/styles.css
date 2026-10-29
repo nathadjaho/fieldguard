@@ -77,3 +77,5 @@ details.json { margin-top: 12px; }
 details.json summary { cursor: pointer; color: var(--muted); font-size: 13px; }
 @media (max-width: 560px) { .record > div { grid-template-columns: 1fr; gap: 2px; } }
 .retry { font-size: 12.5px; color: var(--muted); margin-top: 6px; max-width: 280px; border-left: 2px solid var(--teal); padding-left: 8px; }
+.fallback { margin-top: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.fallback p { margin: 0 0 8px; }

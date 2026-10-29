@@ -158,7 +158,13 @@ export default function App() {
           <button className="secondary" onClick={runExample} disabled={!scenario}>Show the gate on an example</button>
         </div>
         {scenario && <p className="traps">Traps in this note: {scenario.traps.join(' · ')}</p>}
-        {error && <p className="error" role="alert">{error}</p>}
+        {error && (
+          <div className="fallback" role="alert">
+            <p><b>The live model call did not go through.</b> FieldGuard still works without it: the results measured on Nemotron are at the top of the page, and the button below runs the same gate on an example.</p>
+            <p className="source">Details: {error}</p>
+            {scenario && <button className="secondary" onClick={runExample}>Show the gate on an example</button>}
+          </div>
+        )}
       </section>
 
       {result && (
