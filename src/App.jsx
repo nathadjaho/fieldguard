@@ -15,10 +15,12 @@ const firstOf = (id) => SCENARIOS.find((s) => s.profile === id);
 const shortModel = (id) => { const m = String(id).split('/').pop().match(/nemotron-\d+-[a-z]+/i); return m ? m[0].replace(/-/g, ' ').replace(/^n/, 'N') : id; };
 
 // The record as a caseworker or team lead would read it; the JSON stays one click away.
-function RecordView({ record, profile }) {
+function RecordView({ record, profile, pending = 0 }) {
   if (profile.id === 'meeting') {
     const { commitments = [], decisions = [] } = record;
-    if (!commitments.length && !decisions.length) return <p className="empty">Nothing in the record yet: every proposal was refused or is waiting for a person.</p>;
+    if (!commitments.length && !decisions.length) return <p className="empty">{pending > 0
+      ? 'Nothing in the record yet: a commitment is written only once a person confirms who made it. Confirm or reject the fields marked Confirm above.'
+      : 'Nothing in the record yet: every proposal was refused or not stated.'}</p>;
     return (
       <dl className="record">
         {commitments.map((c, i) => (
@@ -29,7 +31,9 @@ function RecordView({ record, profile }) {
     );
   }
   const rows = Object.entries(record).filter(([, v]) => v);
-  if (!rows.length) return <p className="empty">Nothing in the record yet: every proposal was refused or is waiting for a person.</p>;
+  if (!rows.length) return <p className="empty">{pending > 0
+    ? 'Nothing in the record yet: confirm or reject the fields marked Confirm above.'
+    : 'Nothing in the record yet: every proposal was refused or not stated.'}</p>;
   return (
     <dl className="record">
       {rows.map(([k, v]) => <div key={k}><dt>{profile.fields[k]?.label || k}</dt><dd>{v}</dd></div>)}
@@ -219,7 +223,7 @@ export default function App() {
           <section className="card">
             <h2>Record written by the gate</h2>
             <p className="source">Accepted fields, plus the ones a person confirmed.{pending > 0 && ` ${pending} field${pending > 1 ? 's' : ''} still waiting for confirmation.`}</p>
-            <RecordView record={finalRecord} profile={resultProfile} />
+            <RecordView record={finalRecord} profile={resultProfile} pending={pending} />
             <details className="json"><summary>Show as JSON</summary><pre>{JSON.stringify(finalRecord, null, 2)}</pre></details>
           </section>
         </>
